@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/Sidebar";
 import { CHAPTER_CONTENT, VIDEO_DATA } from "@/lib/data";
-import { FileText, Play, MessageCircle } from "lucide-react";
+import { FileText, Play, MessageCircle, Sparkles, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ChatInterface } from "@/components/ChatInterface";
 import ReactMarkdown from "react-markdown";
@@ -19,6 +19,17 @@ export default function Home() {
     setSourceType(type);
     setSelectedSourceId(id || "pdf");
     setMode("source"); // Switch to view source when a source is clicked
+    setSummaryStatus("idle"); // Reset summary status on new selection
+  };
+
+  const [summaryStatus, setSummaryStatus] = useState<"idle" | "generating" | "done">("idle");
+
+  const handleGenerateSummary = () => {
+    setSummaryStatus("generating");
+    // Simulate AI generation delay
+    setTimeout(() => {
+      setSummaryStatus("done");
+    }, 2000);
   };
 
   const currentVideo = VIDEO_DATA.find((v) => v.id === selectedSourceId);
@@ -95,22 +106,53 @@ export default function Home() {
                       />
                     </div>
                   )}
+
                   {currentVideo && (
-                    <div className="bg-card rounded-xl p-6 border shadow-sm">
+                    <div className="bg-card rounded-xl p-6 border shadow-sm flex flex-col h-full min-h-[300px]">
                       <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
                         <Play className="h-5 w-5 text-primary fill-current" />
                         Video Summary
                       </h3>
-                      <ul className="space-y-3">
-                        {currentVideo.summary.map((point, index) => (
-                          <li key={index} className="flex gap-3 text-muted-foreground">
-                            <span className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">
-                              {index + 1}
-                            </span>
-                            {point}
-                          </li>
-                        ))}
-                      </ul>
+
+                      {summaryStatus === "idle" && (
+                        <div className="flex-1 flex flex-col items-center justify-center text-center p-8 border-2 border-dashed rounded-xl bg-muted/30">
+                          <div className="h-16 w-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                            <Sparkles className="h-8 w-8 text-primary" />
+                          </div>
+                          <h4 className="font-semibold text-lg mb-2">Detailed Summary Available</h4>
+                          <p className="text-muted-foreground text-sm max-w-xs mb-6">
+                            Generate a comprehensive AI summary of this video's key concepts and takeaways.
+                          </p>
+                          <button
+                            onClick={handleGenerateSummary}
+                            className="bg-gradient-to-r from-primary to-purple-600 text-white px-6 py-2.5 rounded-full font-medium shadow-md hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2"
+                          >
+                            <Sparkles className="h-4 w-4" /> Generate Summary
+                          </button>
+                        </div>
+                      )}
+
+                      {summaryStatus === "generating" && (
+                        <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
+                          <Loader2 className="h-10 w-10 text-primary animate-spin mb-4" />
+                          <p className="text-muted-foreground font-medium animate-pulse">Analyzing video content...</p>
+                        </div>
+                      )}
+
+                      {summaryStatus === "done" && (
+                        <ul className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-500">
+                          {currentVideo.summary.map((point, index) => (
+                            <li key={index} className="flex gap-3 text-muted-foreground">
+                              <span className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">
+                                {index + 1}
+                              </span>
+                              <span className="text-sm leading-relaxed">
+                                <ReactMarkdown>{point}</ReactMarkdown>
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   )}
                 </div>
