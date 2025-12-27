@@ -1,47 +1,58 @@
-# Interactive Economics Study Tool
+# StudyTool AI - Interactive Economics Companion
 
-An AI-powered study companion inspired by NotebookLM, designed to help students master Economics Chapter 1.
+An AI-powered study companion inspired by NotebookLM, designed to help students master Economics Chapter 1 through interactive text, audio, and video resources.
 
-## Features
+## 🌟 Features
 
-### 1. Interactive Study Chat (Core)
-- **Context-Aware AI**: Asks and answers questions strictly based on the provided PDF ("Introduction to Economics").
-- **Out-of-Scope Detection**: Politely refuses questions unrelated to the chapter (e.g., sports, politics).
-- **Backend API**: Powered by a Node.js/Next.js route handler (`/api/chat`) simulating an LLM response.
+### 1. Interactive Study Chat (Audio & Text)
+-   **Audio Conversation**: Ask questions using your voice (Microphone) and listen to responses (Text-to-Speech).
+-   **Context-Aware AI**: Asks and answers questions strictly based on the provided "Introduction to Economics" chapter.
+-   **Out-of-Scope Detection**: Politely refuses questions unrelated to the chapter (e.g., sports, politics).
 
-### 2. Two-Person Audio Dialogue
-- **Simulated Conversation**: Listen to a "Teacher" and "Student" discuss complex topics like Opportunity Cost.
-- **Audio Player**: Simple controls (Play/Pause) to manage the learning session.
-- **Technology**: Uses Web Speech API for client-side Text-to-Speech generation.
+### 2. Deep Dive Source Content
+-   **Full Textbook Chapter**: Access a comprehensive, textbook-style rendition of "Chapter 1: Introduction to Economics".
+-   **Key Concepts**: Detailed sections on Scarcity, Opportunity Cost, PPF, and Economic Systems.
 
-### 3. Video Summaries
-- **Dual View**: Watch the lecture video while reading AI-generated key points.
-- **Structure**: Includes Summary Points, Exam Tips, and Key Definitions.
+### 3. Smart Video Summaries
+-   **On-Demand Generation**: Click "Generate Summary" to instantly analyze educational videos.
+-   **Detailed Insights**: Get comprehensive, paragraph-style summaries of key video takeaways.
+-   **Dual View**: Watch the lecture video while reading the AI-generated notes side-by-side.
 
-## Tech Stack
-- **Frontend**: Next.js 14 (App Router), React, Tailwind CSS, Lucide Icons.
-- **Backend**: Next.js API Routes (Node.js runtime).
-- **Styling**: Custom Glassmorphism UI with Dark Mode support.
-- **AI Simulation**: Custom keyword-matching algorithm (for demo reliability without API keys) simulating semantic search.
+## 🛠️ Tech Stack
+-   **Frontend**: Next.js 14 (App Router), React, Tailwind CSS.
+-   **Styling**: Lucide Icons, Custom Glassmorphism UI, Dark Mode compatible.
+-   **Audio**: Web Speech API (SpeechRecognition & SpeechSynthesis).
+-   **Backend**: Next.js API Routes (Node.js runtime).
 
-## How to Run
+## 🚀 How to Run
 
-1.  **Install Dependencies**:
+### Prerequisites
+-   Node.js 18.17 or later
+
+### Installation & Setup
+
+1.  **Clone the repository** (if applicable) or navigate to the project folder.
+
+2.  **Install Dependencies**:
     ```bash
     npm install
     ```
-2.  **Start Development Server**:
+
+3.  **Start the Development Server**:
     ```bash
     npm run dev
     ```
-3.  **Access the App**:
-    Open `http://localhost:3000` in your browser.
 
-## Relation to NotebookLM
-Like NotebookLM, this tool takes a specific source (PDF/Video) and "grounds" the AI's knowledge in that source, preventing hallucinations. It transforms passive content into active dialogues and Q&A sessions.
+4.  **Access the Application**:
+    Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Project Structure
-- `app/api/chat`: Backend logic for AI responses.
-- `components/ChatInterface.tsx`: Main chat & audio visualizer UI.
-- `lib/data.ts`: Mock knowledge base (PDF text/Video summaries).
-- `prompts.md`: Documentation of System Prompts used for the AI.
+## 📂 Project Structure
+-   `app/page.tsx`: Main dashboard combining Sidebar, Content View, and Chat.
+-   `components/ChatInterface.tsx`: Handles chat logic, audio recording, and text-to-speech.
+-   `lib/data.ts`: Contains the Mock Knowledge Base (Full Chapter Content & Video Summaries).
+-   `app/api/chat/route.ts`: API route simulating the AI study guide logic.
+
+## 💡 Usage Guide
+1.  **Read**: Select "Chapter 1" from the sidebar to read the full source text.
+2.  **Watch**: Click a video title to watch a lecture. Click "Generate Summary" to get notes.
+3.  **Chat**: Switch to "Chat & Audio" mode. Type or use the **Mic** button to ask questions like "What is opportunity cost?". Click the **Speaker** icon on any message to hear it read aloud.
