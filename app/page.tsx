@@ -1,63 +1,126 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { Sidebar } from "@/components/Sidebar";
+import { CHAPTER_CONTENT, VIDEO_DATA } from "@/lib/data";
+import { FileText, Play, MessageCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ChatInterface } from "@/components/ChatInterface";
+import ReactMarkdown from "react-markdown";
 
 export default function Home() {
+  const [selectedSourceId, setSelectedSourceId] = useState<string | null>("pdf");
+  const [sourceType, setSourceType] = useState<"pdf" | "video">("pdf");
+
+  // Placeholder for Chat/Audio State
+  const [mode, setMode] = useState<"chat" | "source">("source");
+
+  const handleSelectSource = (type: "pdf" | "video", id?: string) => {
+    setSourceType(type);
+    setSelectedSourceId(id || "pdf");
+    setMode("source"); // Switch to view source when a source is clicked
+  };
+
+  const currentVideo = VIDEO_DATA.find((v) => v.id === selectedSourceId);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <div className="flex h-screen bg-background">
+      <Sidebar onSelect={handleSelectSource} selectedId={selectedSourceId} />
+
+      <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+        {/* Header / Mode Switcher */}
+        <header className="h-16 border-b flex items-center justify-between px-6 bg-background/50 backdrop-blur-sm z-10 shrink-0">
+          <h2 className="font-semibold text-lg truncate">
+            {sourceType === "pdf" ? "Chapter 1: Introduction to Economics" : currentVideo?.title}
+          </h2>
+
+          <div className="flex items-center gap-2 bg-muted p-1 rounded-full">
+            <button
+              onClick={() => setMode("source")}
+              className={cn(
+                "px-4 py-1.5 rounded-full text-sm font-medium transition-all",
+                mode === "source"
+                  ? "bg-background shadow-sm text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              Source
+            </button>
+            <button
+              onClick={() => setMode("chat")}
+              className={cn(
+                "px-4 py-1.5 rounded-full text-sm font-medium transition-all flex items-center gap-2",
+                mode === "chat"
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+              <MessageCircle className="w-4 h-4" />
+              Chat & Audio
+            </button>
+          </div>
+        </header>
+
+        {/* Content Area */}
+        <div className="flex-1 overflow-auto p-8 relative">
+          {mode === "source" ? (
+            <div className="max-w-4xl mx-auto h-full animate-in fade-in slide-in-from-bottom-4 duration-500">
+              {sourceType === "pdf" ? (
+                <div className="prose prose-slate dark:prose-invert max-w-none bg-card p-10 rounded-xl shadow-sm border">
+                  <div className="flex items-center gap-4 mb-8 pb-6 border-b">
+                    <div className="h-12 w-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-red-600 dark:text-red-400" />
+                    </div>
+                    <div>
+                      <h1 className="text-3xl font-bold m-0">Introduction to Economics</h1>
+                      <p className="text-muted-foreground mt-1">PDF Source • 14 Pages</p>
+                    </div>
+                  </div>
+                  <div className="leading-relaxed">
+                    <ReactMarkdown>{CHAPTER_CONTENT}</ReactMarkdown>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-6 h-full">
+                  {currentVideo && (
+                    <div className="aspect-video w-full rounded-xl overflow-hidden shadow-lg border bg-black">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        src={`https://www.youtube.com/embed/${currentVideo.id}`}
+                        title="YouTube video player"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
+                    </div>
+                  )}
+                  {currentVideo && (
+                    <div className="bg-card rounded-xl p-6 border shadow-sm">
+                      <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
+                        <Play className="h-5 w-5 text-primary fill-current" />
+                        Video Summary
+                      </h3>
+                      <ul className="space-y-3">
+                        {currentVideo.summary.map((point, index) => (
+                          <li key={index} className="flex gap-3 text-muted-foreground">
+                            <span className="h-6 w-6 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0 text-xs font-bold">
+                              {index + 1}
+                            </span>
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="h-full animate-in fade-in zoom-in-95 duration-300">
+              <ChatInterface />
+            </div>
+          )}
         </div>
       </main>
     </div>
